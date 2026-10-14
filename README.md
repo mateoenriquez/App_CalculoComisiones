@@ -3,7 +3,6 @@
 Aplicación web en CakePHP 5 para el cálculo de comisiones de vendedores. Desarrollada como ejercicio universitario MVC en la carrera de Ingeniería en Tecnologías de la Información (UDLA).
 
 > 🌐 **Despliegue en Producción**: [https://mateo-enriquez.alwaysdata.net](https://mateo-enriquez.alwaysdata.net)  
-> 🔒 **Estado del Servicio**: Activo 24/7 con HTTPS forzado (Let's Encrypt), PHP 8.3 y base de datos MariaDB persistente.
 
 ---
 
@@ -19,106 +18,7 @@ Aplicación web en CakePHP 5 para el cálculo de comisiones de vendedores. Desar
 | MySQL | 8.0.46 |
 | Bootstrap | 5.3 (CDN) |
 
----
-
-## Requisitos del sistema
-
-- PHP >= 8.2 con extensiones: `bcmath`, `pdo_mysql`, `mbstring`, `intl`, `json`, `xml`
-- MySQL 8.0+ o MariaDB 10.5+ accesible en `127.0.0.1:3306`
-- Composer (solo para el entorno dev; el directorio `vendor/` ya está generado)
-- PowerShell 5.1 o superior (Windows)
-
----
-
-## 1. Crear la base de datos en MySQL Workbench
-
-1. Abrir **MySQL Workbench** y conectarse al servidor local (root / tu contraseña).
-2. Ir a **File > Open SQL Script** y seleccionar `database\create_database.sql`.
-3. Ejecutar el script (botón ⚡ o `Ctrl+Shift+Enter`).
-
-Alternativamente, desde PowerShell:
-
-```powershell
-mysql -u root -p < "database\create_database.sql"
-```
-
----
-
-## 2. Configuración local (sin revelar secretos)
-
-1. Copia el archivo de ejemplo:
-
-```powershell
-Copy-Item "config\.env.example" "config\.env"
-```
-
-2. Edita `config\.env` y completa tu contraseña de MySQL:
-
-```env
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=sistema_comisiones
-DB_USERNAME=root
-DB_PASSWORD=TU_CONTRASENA_AQUI
-DEBUG=true
-```
-
-> **NUNCA** subas `config/.env` al repositorio. Está en `.gitignore`.
-
----
-
-## 3. Migraciones y seeders
-
-Desde la raíz del proyecto en PowerShell:
-
-```powershell
-# Opción A: script automático (recomendado)
-.\database\setup.ps1
-
-# Opción B: comandos manuales
-php bin\cake.php migrations migrate
-php bin\cake.php seeds run VendedoresSeeder
-php bin\cake.php seeds run ReglasSeeder
-php bin\cake.php seeds run VentasSeeder
-```
-
-> Los seeders son **idempotentes**: pueden ejecutarse más de una vez sin duplicar datos.
-
----
-
-## 4. Inicio del servidor de desarrollo
-
-```powershell
-php -S localhost:8765 -t webroot/
-```
-
-Abrir en el navegador:
-
-- 🏠 **Inicio**: [http://localhost:8765/comisiones](http://localhost:8765/comisiones)
-- 🔍 **Detalle**: `http://localhost:8765/comisiones/detalle/{id}`
-
----
-
-## 5. Ejecución de tests
-
-El proyecto cuenta con una suite completa de pruebas unitarias y de integración que utiliza una base de datos aislada en SQLite (`tmp/tests.sqlite`), garantizando que la base de datos principal (`sistema_comisiones`) no sea modificada ni alterada.
-
-```powershell
-# Ejecutar toda la suite de pruebas (59 tests)
-php vendor\bin\phpunit --colors=always
-
-# Ejecutar únicamente las pruebas unitarias del servicio
-php vendor\bin\phpunit --colors=always tests\TestCase\Service\CalculadoraComisionesServiceTest.php
-
-# Ejecutar únicamente las pruebas de integración del controlador y filtros
-php vendor\bin\phpunit --colors=always tests\TestCase\Controller\ComisionesControllerTest.php
-```
-
-Resultado esperado: **59 tests, 166 assertions, OK (100%)**.
-
----
-
-## 6. Filtro de Ventas por Rango de Fechas
+## 1. Filtro de Ventas por Rango de Fechas
 
 La aplicación permite filtrar las ventas acumuladas por un rango temporal en la pantalla principal y en la vista de detalle.
 
@@ -159,7 +59,7 @@ Al hacer clic en "Ver detalle" desde un resumen filtrado:
 
 ---
 
-## 7. Arquitectura MVC y Servicio de Dominio
+## 2. Arquitectura MVC y Servicio de Dominio
 
 ```
 src/
@@ -193,7 +93,7 @@ templates/
 
 ---
 
-## 8. Regla de comisión (por escalón, no progresiva)
+## 3. Regla de comisión (por escalón, no progresiva)
 
 Se elige la regla con **meta_minima más alta** tal que `total_vendido >= meta_minima`.
 El porcentaje elegido se aplica al **total completo**.
@@ -205,56 +105,6 @@ El porcentaje elegido se aplica al **total completo**.
 | ≥ 2000.00 | 10% | total × 0.10 |
 
 > ⚠️ Los umbrales son **inclusivos** (`>=`). Por ejemplo, exactamente $1,000.00 aplica 5%.
-
----
-
-## 9. Resultados demo esperados
-
-Despues de ejecutar los seeders, la página principal debe mostrar:
-
-| Vendedor | Total Vendido | Meta Mínima | % Comisión | Comisión |
-|---|---|---|---|---|
-| Carla Torres | \$2,500.00 | \$2,000.00 | 10.00% | \$250.00 |
-| Bruno Mendoza | \$1,500.00 | \$1,000.00 | 5.00% | \$75.00 |
-| Ana López | \$800.00 | \$0.00 | 0.00% | \$0.00 |
-
-**Totales globales:**
-- Total vendido: **\$4,800.00 USD**
-- Total comisiones: **\$325.00 USD**
-- Vendedores: **3**
-
----
-
-## 10. Problemas comunes
-
-### Error de conexión a MySQL
-
-```
-ERROR 2002 (HY000): No se puede conectar al servidor MySQL
-```
-
-- Verifica que MySQL esté corriendo: Servicios de Windows > MySQL80.
-- Comprueba `DB_HOST=127.0.0.1` (no `localhost`) en `config/.env`.
-- Verifica la contraseña en `config/.env`.
-
-### La página devuelve error 404 al abrir `/`
-
-- Asegúrate de navegar a `http://localhost:8765/comisiones`.
-- La raíz `/` redirige automáticamente a `/comisiones`.
-
-### Error `Security.salt` no configurado
-
-- Verifica que `config/app_local.php` existe y tiene el valor `salt`.
-- Si lo eliminaste, restaura con: `Copy-Item config\app_local.example.php config\app_local.php`.
-
-### Los seeders fallan por FK
-
-```
-ERROR: Vendedor 'Ana López' no encontrado
-```
-
-- Ejecuta los seeders en orden: primero `VendedoresSeeder`, luego `ReglasSeeder`, luego `VentasSeeder`.
-- El script `database/setup.ps1` garantiza el orden correcto.
 
 ---
 
@@ -272,5 +122,5 @@ La aplicación se encuentra desplegada y disponible públicamente en la nube:
   * Certificado SSL TLS con redirección HTTPS obligatoria.
   * Base de datos persistente con migraciones y datos demo precargados.
 
-Para consultar el manual técnico de infraestructura, procedimientos de actualización sin caída y respaldos de base de datos, revisa la guía completa en [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Manual técnico de infraestructura, procedimientos de actualización sin caída y respaldos de base de datos, revisar  guía completa en [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
