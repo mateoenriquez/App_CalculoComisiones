@@ -108,7 +108,7 @@ El porcentaje elegido se aplica al **total completo**.
 
 ---
 
-## 11. Despliegue en Producción (Alwaysdata)
+## 4. Despliegue en Producción (Alwaysdata)
 
 La aplicación se encuentra desplegada y disponible públicamente en la nube:
 
