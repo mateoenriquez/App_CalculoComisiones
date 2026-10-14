@@ -2,6 +2,9 @@
 
 Aplicación web en CakePHP 5 para el cálculo de comisiones de vendedores. Desarrollada como ejercicio universitario MVC en la carrera de Ingeniería en Tecnologías de la Información (UDLA).
 
+> 🌐 **Despliegue en Producción**: [https://mateo-enriquez.alwaysdata.net](https://mateo-enriquez.alwaysdata.net)  
+> 🔒 **Estado del Servicio**: Activo 24/7 con HTTPS forzado (Let's Encrypt), PHP 8.3 y base de datos MariaDB persistente.
+
 ---
 
 ## Versiones utilizadas
@@ -255,6 +258,19 @@ ERROR: Vendedor 'Ana López' no encontrado
 
 ---
 
-## 11. Deployment en producción
+## 11. Despliegue en Producción (Alwaysdata)
 
-Ver [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) para instrucciones detalladas.
+La aplicación se encuentra desplegada y disponible públicamente en la nube:
+
+* 🌐 **URL Pública Oficial**: [https://mateo-enriquez.alwaysdata.net](https://mateo-enriquez.alwaysdata.net)
+* 📊 **Módulo de Comisiones**: [https://mateo-enriquez.alwaysdata.net/comisiones](https://mateo-enriquez.alwaysdata.net/comisiones)
+* **Proveedor de Alojamiento**: Alwaysdata Cloud Hosting.
+* **Stack en Servidor**: PHP 8.3 (FastCGI) + MariaDB 11.8 (InnoDB, UTF-8 mb4).
+* **Seguridad Aplicada**:
+  * `DocumentRoot` aislado estrictamente a `webroot/` (código fuente y configuraciones no accesibles vía HTTP).
+  * `DEBUG=false` en el entorno remoto.
+  * Certificado SSL TLS con redirección HTTPS obligatoria.
+  * Base de datos persistente con migraciones y datos demo precargados.
+
+Para consultar el manual técnico de infraestructura, procedimientos de actualización sin caída y respaldos de base de datos, revisa la guía completa en [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
